@@ -8,7 +8,7 @@ char stopbit = '1';
 //reciever variables
 String convert = "";
 String convert2 = "";
-int hight, lowt, Ttime;
+int hight, lowt, totalt;
 
 String Ascii2UART (String input)
 {
@@ -104,7 +104,7 @@ void loop() {
   hight = pulseIn(8, HIGH);  //determines time of a positive peak in the input wave
   lowt = pulseIn(8, LOW);    //determines time of a negative peak in the input wave
   totalt = hight + lowt;     //sums the high and low times
-  int freq = (1000000 / Ttime)-30;
+  int freq = (1000000 / totalt)-30;
   int i = 1;
   int k=0;
   if (freq > 2115 && freq < 2185) //2125+-35
