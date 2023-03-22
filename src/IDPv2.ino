@@ -8,7 +8,7 @@ char stopbit = '1';
 //reciever variables
 String convert = "";
 String convert2 = "";
-int Htime, Ltime, Ttime;
+int hight, lowt, Ttime;
 
 String Ascii2UART (String input)
 {
