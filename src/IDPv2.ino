@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "TextHandler.h"
 #include "Transmitter.h"
 
 float baudRate = 45.45;
@@ -47,11 +48,6 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  String in = "giantcheeseitman ";
-  //String binstr = Ascii2Binary(in);
-  int f = 0;
-
   //write out pre-defined string
   /*for(int ii=0; ii<in.length(); ii++)
     {
