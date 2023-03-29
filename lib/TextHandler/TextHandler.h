@@ -1,6 +1,6 @@
-#ifndef TEXT_HANDLER
-#define TEXT_HANDLER
+#ifndef TEXT_HANDLER_H
+#define TEXT_HANDLER_H
 
 #include "Arduino.h"
 
-#endif
+#endif // TEXT_HANDLER_H
