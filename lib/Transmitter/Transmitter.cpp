@@ -1,4 +1,5 @@
 #include "Transmitter.h"
+#include "Settings.h"
 
 /**
  * Converts an input string into UART bits
