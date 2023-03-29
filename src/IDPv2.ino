@@ -1,4 +1,5 @@
 #include "Arduino.h"
+#include "Transmitter.h"
 
 float baudRate = 45.45;
 float bitDelayTime;
