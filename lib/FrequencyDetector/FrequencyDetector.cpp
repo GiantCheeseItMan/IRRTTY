@@ -3,6 +3,8 @@
 int convert= 0b0; //test to ensure binary works, as opposed to adding into a string
 int Htime, Ltime, Ttime;
 int freq2;
+
+
 void setup() {
   // put your setup code here, to run once:
 Serial.begin (9600);
