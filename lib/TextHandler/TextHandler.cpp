@@ -3,12 +3,10 @@
 /**
  * Default Constructor for a TextHandler
 */
-TextHandler::TextHandler(int baudRate)
+TextHandler::TextHandler()
 {
-    // Start a serial stream
-    Serial.begin(baudRate);
     // Reset fields
-    printBuffer = "| ";
+    printBuffer = "";
     serialIn = "";
 }
 
@@ -29,7 +27,8 @@ String TextHandler::getSerialIn()
 void TextHandler::addToPrintBuffer(String string)
 {
     // Add the string to the print buffer
-    printBuffer += string;
+    printBuffer = printBuffer + string;
+    checkPrintBuffer();
 }
 
 /**
@@ -39,7 +38,8 @@ void TextHandler::addToPrintBuffer(String string)
 void TextHandler::addToPrintBuffer(char character)
 {
     // Add the character to the print buffer
-    printBuffer += character;
+    printBuffer = printBuffer + character;
+    checkPrintBuffer();
 }
 
 /**
@@ -52,6 +52,7 @@ void TextHandler::updateSerialIn()
     {
         // Read the string into the input buffer
         serialIn = Serial.readString();
+        printInputOnMonitor();
     }
 }
 
@@ -65,17 +66,28 @@ void TextHandler::checkPrintBuffer()
     // print to the serial monitor.
     if (printBuffer.endsWith("\n"))
     {
-        printOnMonitor(printBuffer);
+        printBufferOnMonitor();
     }
 }
 
 /**
  * Prints the print buffer to the serial monitor.
 */
-void TextHandler::printOnMonitor(String string)
+void TextHandler::printBufferOnMonitor()
 {
     // Print the print buffer on monitor
-    Serial.println(string);
+    Serial.print(printBuffer);
     // Clear print buffer
-    printBuffer = "| ";
+    printBuffer = "";
+}
+
+/**
+ * Prints the print buffer to the serial monitor.
+*/
+void TextHandler::printInputOnMonitor()
+{
+    // Print the serialIn on monitor
+    Serial.print(serialIn);
+    // Clear print buffer
+    serialIn = "";
 }

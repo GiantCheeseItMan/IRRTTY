@@ -7,20 +7,23 @@ class TextHandler
 {
 public:
 // Constructor
-TextHandler(int baudRate);
+TextHandler();
+// Update the contents of serialIn
+void updateSerialIn();
 // Get the last input to the serial monitor
 String getSerialIn();
-// Send a line to the serial monitor
+// Add a string/char to the print buffer
 void addToPrintBuffer(String string);
 void addToPrintBuffer(char character);
 
 private:
-// Update the contents of serialIn
-void updateSerialIn();
 // Check the print buffer
 void checkPrintBuffer();
 // Print the print buffer on the serial monitor
-void printOnMonitor(String string);
+void printBufferOnMonitor();
+
+// Prints the serialIn on the monitor
+void printInputOnMonitor();
 
 // The last serial monitor input
 String serialIn;
