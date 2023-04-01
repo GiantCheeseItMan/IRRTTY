@@ -6,6 +6,4 @@
 
 String Ascii2UART(String input);
 
-
-
 #endif // TRANSMITTER_H

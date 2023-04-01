@@ -6,11 +6,12 @@ int FD_detectFrequency()
   int Ltime = pulseIn(8, LOW);  // read low time
   int Ttime = Htime + Ltime;
   int freq = (1000000 / Ttime) - 30;
+  return freq;
 }
 
 short FD_demodulate()
 {
-  int freq = detectFrequency();
+  int freq = FD_detectFrequency();
   if (freq > 2115 && freq < 2185) // 2125+-35
   {
     digitalWrite(2, HIGH);

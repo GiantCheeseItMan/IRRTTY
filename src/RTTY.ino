@@ -1,9 +1,11 @@
 #include "Arduino.h"
 #include "TextHandler.h"
 #include "Transmitter.h"
+#include "UARTDecoder.h"
 #include "Settings.h"
 
 TextHandler textHandler;
+Decoder decoder;
 
 void setup() {
   // put your setup code here, to run once:
@@ -20,7 +22,10 @@ void setup() {
 }
 
 void loop() {
-
-  textHandler.updateSerialIn();
-
+  delay(BAUD_TIME);
+  if(decoder.decode())
+  {
+    textHandler.addToPrintBuffer(decoder.getChar());
+    textHandler.addToPrintBuffer('\n');
+  }
 }
