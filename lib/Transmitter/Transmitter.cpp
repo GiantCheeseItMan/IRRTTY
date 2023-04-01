@@ -28,16 +28,16 @@ bool transmit(String string)
     //turn bits into square wave
     for (unsigned int i = 0; i < rec.length(); i++)
     {
-      delay(BIT_DELAY_TIME);
+      delay(BAUD_TIME);
 
       if (rec[i] == '0')
       {
-        tone(9, SPACE_FREQUENCY);
+        tone(9, SPACE_FREQ);
       }
       else
       {
 
-        tone(9, MARK_FREQUENCY);
+        tone(9, MARK_FREQ);
       }
     }
     return done;
