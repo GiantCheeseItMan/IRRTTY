@@ -1,6 +1,26 @@
 #include "UARTDecoder.h"
 #include <avr/interrupt.h>
 
+//put recieved bits into an array
+
+char freqinput=='0'; //change, should involve interrupt
+
+bool arr[10]= {false}
+for (int i=0;i<10;i++)
+{
+    arr[i] = (freqinput == '1');
+}
+
+if (i==9)
+{
+    bool databits[8] = {false}
+    for (int ii=0; ii<8; ii++)
+    {
+        databits[ii] = arr[ii+1];
+    }
+}
+
+
 //timer
 //when first 0 is detected, record time
 unsigned long first0 = millis();
