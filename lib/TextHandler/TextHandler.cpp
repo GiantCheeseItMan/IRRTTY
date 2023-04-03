@@ -16,7 +16,7 @@ TextHandler::TextHandler()
 */
 String TextHandler::getSerialIn()
 {
-    // Return the value of serialIn
+    updateSerialIn();
     return serialIn;
 }
 

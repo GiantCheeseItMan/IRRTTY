@@ -1,10 +1,45 @@
 #include "Transmitter.h"
 #include "Settings.h"
 
+Transmitter::Transmitter()
+{
+  transmitQueue[QUEUE_LENGTH] = {""};
+  tqSize = 0;
+  UARTStreamCursor = 0;
+}
+
+/**
+ * Adds an item to the end of the transmit queue
+*/
+void Transmitter::addToTransmitQueue(String input)
+{
+  if (tqSize < QUEUE_LENGTH - 1)
+  {
+    transmitQueue[tqSize] = Ascii2UART(input);
+    tqSize++;
+  }
+}
+
+/**
+ * Removes the first item from the transmit queue and shifts everything down
+*/
+void Transmitter::removeFromTransmitQueue()
+{
+  if (tqSize < 0)
+  {
+      for (int i = 0; i < tqSize - 1; i++)
+   {
+      transmitQueue[i] = transmitQueue[i + 1];
+   }
+    tqSize--;
+  }
+
+}
+
 /**
  * Converts an input string into UART bits
 */
-String Ascii2UART(String input)
+String Transmitter::Ascii2UART(String input)
 {
   String output = "";
   for (unsigned int i = 0; i < input.length(); i++)
@@ -21,25 +56,28 @@ String Ascii2UART(String input)
   return output;
 }
 
-bool transmit(String string)
+/**
+ * Transmits 1 bit from the first item in the queue. Removes that item if it is done
+*/
+void Transmitter::transmit()
 {
-    bool done = false;
-     String rec = Ascii2UART(string);
-    //turn bits into square wave
-    for (unsigned int i = 0; i < rec.length(); i++)
-    {
-      delay(BAUD_TIME);
+  char currentBit = transmitQueue[0][UARTStreamCursor];
 
-      if (rec[i] == '0')
-      {
-        tone(9, SPACE_FREQ);
-      }
-      else
-      {
+  if (currentBit == '0')
+  {
+    tone(9, SPACE_FREQ);
+  }
+  else
+  {
+    tone(9, MARK_FREQ);
+  }
 
-        tone(9, MARK_FREQ);
-      }
-    }
-    return done;
+  UARTStreamCursor++;
+
+  if (UARTStreamCursor >= transmitQueue[0].length())
+  {
+    removeFromTransmitQueue();
+    UARTStreamCursor = 0;
+  }
+    
 }
-
