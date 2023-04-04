@@ -7,17 +7,9 @@ Decoder::Decoder()
     decoderCursor = 0;
 }
 
-bool Decoder::addSample(short bit)
+bool Decoder::addSample(int bit)
 {
-    if (bit != -1)
-    {
-        data[decoderCursor] = bit;
-    }
-    else
-    {
-        data[decoderCursor] = 0;
-    }
-
+    data[decoderCursor] = bit;
     decoderCursor++;
     if (decoderCursor >= FRAME_SIZE)
     {
@@ -29,10 +21,10 @@ bool Decoder::addSample(short bit)
 
 char Decoder::decode()
 {
-    char decodedChar = '\0';
-    for (int i = 1; i < 10; i++)
+    unsigned char decodedChar = '\0';
+    for (int i = 1; i < 7; i++)
     {
-        decodedChar |= (data[i]<<(i - 1));
+        decodedChar |= (data[i]<<(i));
     }
     lastChar = decodedChar;
     return decodedChar;

@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "Settings.h"
 
-#define TOLERANCE 50
+#define TOLERANCE 35
 #define UPPER_MARK MARK_FREQ + TOLERANCE
 #define LOWER_MARK MARK_FREQ - TOLERANCE
 #define UPPER_SPACE SPACE_FREQ + TOLERANCE

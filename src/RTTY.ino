@@ -10,6 +10,8 @@ Decoder decoder;
 Transmitter transmitter;
 FrequencyDetector detector;
 
+volatile bool locked;
+
 void setup()
 {
   // put your setup code here, to run once:
@@ -23,6 +25,7 @@ void setup()
   // reciever
   pinMode(RECEIVE_PIN, INPUT);
 
+  locked = false;
   // Configure timer 1
   // Turn off interrupts
   cli();
@@ -31,9 +34,9 @@ void setup()
   TCCR1B = 0;
   // Set counter to 0
   TCNT1 = 0;
-  // Set compare match register to 45.45 baud sample rate * 25 (because 45.45 is too slow)
+  // Set compare match register to 45.45 baud sample rate
   // 16M for 16 MHz timer, 8 for prescaler of 8
-  OCR1A = (16000000 / (BAUD_RATE * 8));
+  OCR1A = (16000000 / (BAUD_RATE * 8 * 10));
   // Enable compare match mode
   TCCR1B |= (1 << WGM12);
   // Use 64 bit prescaler
@@ -48,7 +51,11 @@ void loop()
 {
 
   detector.demodulate();
-
+  if(!detector.getLastBit() && !locked)
+  {
+    TCNT1 = 0;
+    locked = true;
+  }
   if (textHandler.updateSerialIn())
   {
     transmitter.addToTransmitQueue(textHandler.getSerialIn());
@@ -62,7 +69,7 @@ ISR(TIMER1_COMPA_vect)
   transmitter.transmit();
   if (decoder.addSample(detector.getLastBit()))
   {
-
+    Serial.println(detector.getLastBit());
     textHandler.addToPrintBuffer(decoder.decode());
   }
 }

@@ -9,7 +9,7 @@ class Decoder{
 
 public:
 Decoder();
-bool addSample(short sample);
+bool addSample(int sample);
 char decode();
 
 private:

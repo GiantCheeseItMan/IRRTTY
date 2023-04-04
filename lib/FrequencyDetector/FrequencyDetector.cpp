@@ -27,9 +27,7 @@ void FrequencyDetector::demodulate()
   int Htime = pulseIn(RECEIVE_PIN, HIGH); // read high time
   int Ltime = pulseIn(RECEIVE_PIN, LOW);  // read low time
   int Ttime = Htime + Ltime;
-  int freq = (1000000 / Ttime) - 180;
-
-  Serial.print(freq);
+  int freq = (1000000 / Ttime) - 110; // Offset blocking time
 
   if (abs(lastFreq - freq) < 2 * TOLERANCE)
   {
@@ -46,7 +44,4 @@ void FrequencyDetector::demodulate()
     }
   }
   lastFreq = freq;
-
-  Serial.print(" - ");
-  Serial.println(lastBit);
 }
