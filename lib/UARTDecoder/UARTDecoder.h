@@ -1,7 +1,7 @@
 #ifndef UART_DECODER_H
 #define UART_DECODER_H
 
-#define FRAME_SIZE 8
+#define FRAME_SIZE 10
 
 #include "Arduino.h"
 

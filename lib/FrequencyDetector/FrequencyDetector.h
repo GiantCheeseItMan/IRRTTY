@@ -13,16 +13,13 @@
 class FrequencyDetector{
     public:
     FrequencyDetector();
-    int detectFrequency();
-    bool demodulate();
+    void demodulate();
     int getLastBit();
 
     private:
-    int lastFreq;
     int lastBit;
+    int lastFreq;
 };
-
-void nonBlockingPulseIn();
 
 
 #endif // FREQUENCY_DETECTOR_H

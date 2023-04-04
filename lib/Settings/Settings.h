@@ -4,7 +4,7 @@
 #include "Arduino.h"
 
 #define TRANSMIT_PIN 11
-#define RECIEVE_PIN 2
+#define RECEIVE_PIN 2
 #define DEBUG_PIN 4
 
 #define BAUD_RATE 45
