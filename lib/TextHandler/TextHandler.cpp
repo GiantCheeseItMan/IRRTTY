@@ -6,8 +6,8 @@
 TextHandler::TextHandler()
 {
     // Reset fields
-    printBuffer = "";
-    serialIn = "";
+    printBuffer = "\0";
+    serialIn = "\0";
 }
 
 /**
@@ -16,7 +16,7 @@ TextHandler::TextHandler()
 */
 String TextHandler::getSerialIn()
 {
-    updateSerialIn();
+    // Return the value of serialIn
     return serialIn;
 }
 
@@ -45,7 +45,7 @@ void TextHandler::addToPrintBuffer(char character)
 /**
  * Reads in the values of Serial if they're available
 */
-void TextHandler::updateSerialIn()
+bool TextHandler::updateSerialIn()
 {
     // Check for bits in serial buffer
     if (Serial.available())
@@ -53,7 +53,9 @@ void TextHandler::updateSerialIn()
         // Read the string into the input buffer
         serialIn = Serial.readString();
         printInputOnMonitor();
+        return true;
     }
+    return false;
 }
 
 /**
@@ -78,7 +80,7 @@ void TextHandler::printBufferOnMonitor()
     // Print the print buffer on monitor
     Serial.print(printBuffer);
     // Clear print buffer
-    printBuffer = "";
+    printBuffer = "\0";
 }
 
 /**
@@ -88,6 +90,5 @@ void TextHandler::printInputOnMonitor()
 {
     // Print the serialIn on monitor
     Serial.print(serialIn);
-    // Clear print buffer
-    serialIn = "";
+    serialIn = "\0";
 }

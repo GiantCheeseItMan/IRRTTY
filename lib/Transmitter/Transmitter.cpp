@@ -3,7 +3,7 @@
 
 Transmitter::Transmitter()
 {
-  transmitQueue[QUEUE_LENGTH] = {""};
+  transmitQueue[QUEUE_LENGTH] = {"\0"};
   tqSize = 0;
   UARTStreamCursor = 0;
 }
@@ -13,7 +13,7 @@ Transmitter::Transmitter()
 */
 void Transmitter::addToTransmitQueue(String input)
 {
-  if (tqSize < QUEUE_LENGTH - 1)
+  if (tqSize < QUEUE_LENGTH - 1 && input != "\0")
   {
     transmitQueue[tqSize] = Ascii2UART(input);
     tqSize++;
@@ -25,7 +25,7 @@ void Transmitter::addToTransmitQueue(String input)
 */
 void Transmitter::removeFromTransmitQueue()
 {
-  if (tqSize < 0)
+  if (tqSize > 0)
   {
       for (int i = 0; i < tqSize - 1; i++)
    {
@@ -33,7 +33,6 @@ void Transmitter::removeFromTransmitQueue()
    }
     tqSize--;
   }
-
 }
 
 /**
@@ -41,7 +40,7 @@ void Transmitter::removeFromTransmitQueue()
 */
 String Transmitter::Ascii2UART(String input)
 {
-  String output = "";
+  String output = "\0";
   for (unsigned int i = 0; i < input.length(); i++)
   {
     output += START_BIT;
@@ -59,25 +58,34 @@ String Transmitter::Ascii2UART(String input)
 /**
  * Transmits 1 bit from the first item in the queue. Removes that item if it is done
 */
-void Transmitter::transmit()
+int Transmitter::transmit()
 {
+  // Only transmit space if queue empty
+  if (tqSize <= 0)
+  {
+    tone(TRANSMIT_PIN, MARK_FREQ);
+    return 0;
+  }
+
   char currentBit = transmitQueue[0][UARTStreamCursor];
 
   if (currentBit == '0')
   {
-    tone(9, SPACE_FREQ);
+    tone(TRANSMIT_PIN, SPACE_FREQ);
   }
   else
   {
-    tone(9, MARK_FREQ);
+    tone(TRANSMIT_PIN, MARK_FREQ);
   }
 
   UARTStreamCursor++;
 
   if (UARTStreamCursor >= transmitQueue[0].length())
   {
+    tone(TRANSMIT_PIN, MARK_FREQ);
     removeFromTransmitQueue();
     UARTStreamCursor = 0;
   }
+  return 1;
     
 }

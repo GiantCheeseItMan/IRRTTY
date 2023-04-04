@@ -1,7 +1,7 @@
 #ifndef UART_DECODER_H
 #define UART_DECODER_H
 
-#define FRAME_SIZE 10
+#define FRAME_SIZE 8
 
 #include "Arduino.h"
 
@@ -9,8 +9,8 @@ class Decoder{
 
 public:
 Decoder();
-bool decode();
-char getChar();
+bool addSample(short sample);
+char decode();
 
 private:
 bool data[FRAME_SIZE];

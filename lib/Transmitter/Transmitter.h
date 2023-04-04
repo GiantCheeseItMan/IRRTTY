@@ -8,13 +8,13 @@
 
 class Transmitter{
 public:
+void addToTransmitQueue(String input);
 Transmitter();
-void transmit();
+int transmit();
 
 
 private:
 String Ascii2UART(String input);
-void addToTransmitQueue(String input);
 void removeFromTransmitQueue();
 unsigned int UARTStreamCursor;
 int tqSize;

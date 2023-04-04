@@ -1,13 +1,50 @@
 #include "Arduino.h"
 #include "FrequencyDetector.h"
 
-int FD_detectFrequency()
+volatile unsigned long pulseTimeStart = micros();
+volatile unsigned long pulseTimeEnd = micros();
+volatile bool durationMeasured = false;
+
+FrequencyDetector::FrequencyDetector()
 {
-  int Htime = pulseIn(8, HIGH); // read high time
-  int Ltime = pulseIn(8, LOW);  // read low time
-  int Ttime = Htime + Ltime;
-  int freq = (1000000 / Ttime) - 30; // Offset by 30
-  return freq;
+  lastBit = -1;
+  lastFreq = MARK_FREQ;
+  attachInterrupt(digitalPinToInterrupt(RECIEVE_PIN), nonBlockingPulseInZZ, CHANGE);
+}
+
+int FrequencyDetector::getLastBit()
+{
+  return lastBit;
+}
+
+void nonBlockingPulseInHIGH()
+{
+  if (digitalRead(RECIEVE_PIN) == HIGH) 
+  {
+    pulseTimeStart = micros();
+  }
+  else 
+  {
+    pulseTimeEnd = micros();
+    durationMeasured = true;
+  }
+}
+
+int FrequencyDetector::detectFrequency()
+{
+  if(durationMeasured)
+  {
+    durationMeasured = false;
+    unsigned long Ttime = (pulseTimeEnd - pulseTimeStart) * 2;
+    int freq = (1000000 / Ttime) - 15;
+    if (freq > 0 && freq < 5000)
+    {
+      lastFreq = freq;
+      return freq;
+    }
+  }
+
+return lastFreq;
 }
 
 /**
@@ -16,18 +53,22 @@ int FD_detectFrequency()
  * @returns 0 if frequency is about space frequency
  * @returns -1 if frequency is neither
 */
-short FD_demodulate()
+bool FrequencyDetector::demodulate()
 {
-  int freq = FD_detectFrequency();
+  int freq = detectFrequency();
+  bool bit;
   if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
   {
-    digitalWrite(2, HIGH);
-    return 1;
+    digitalWrite(DEBUG_PIN, HIGH);
+    lastBit = 1;
+    bit = true;
   }
   else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
   {
-    digitalWrite(2, LOW);
-    return 0;
+    digitalWrite(DEBUG_PIN, LOW);
+    lastBit = 0;
+    bit = false;
   }
-  return -1;
+  Serial.println(freq);
+  return bit;
 }

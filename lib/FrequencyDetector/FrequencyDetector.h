@@ -4,14 +4,25 @@
 #include "Arduino.h"
 #include "Settings.h"
 
-#define TOLERANCE 35
+#define TOLERANCE 50
 #define UPPER_MARK MARK_FREQ + TOLERANCE
 #define LOWER_MARK MARK_FREQ - TOLERANCE
 #define UPPER_SPACE SPACE_FREQ + TOLERANCE
 #define LOWER_SPACE SPACE_FREQ - TOLERANCE
 
-int FD_detectFrequency();
+class FrequencyDetector{
+    public:
+    FrequencyDetector();
+    int detectFrequency();
+    bool demodulate();
+    int getLastBit();
 
-short FD_demodulate();
+    private:
+    int lastFreq;
+    int lastBit;
+};
+
+void nonBlockingPulseIn();
+
 
 #endif // FREQUENCY_DETECTOR_H

@@ -9,7 +9,7 @@ public:
 // Constructor
 TextHandler();
 // Update the contents of serialIn
-void updateSerialIn();
+bool updateSerialIn();
 // Get the last input to the serial monitor
 String getSerialIn();
 // Add a string/char to the print buffer
