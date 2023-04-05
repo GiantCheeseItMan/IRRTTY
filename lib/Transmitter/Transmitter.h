@@ -4,8 +4,23 @@
 #include "Arduino.h"
 #include "Settings.h"
 
-String Ascii2UART(String input);
+#define QUEUE_LENGTH 5
 
+class Transmitter{
+public:
+void addToTransmitQueue(String input);
+Transmitter();
+int transmit();
+
+
+private:
+String Ascii2UART(String input);
+void removeFromTransmitQueue();
+unsigned int UARTStreamCursor;
+int tqSize;
+String transmitQueue[QUEUE_LENGTH];
+
+};
 
 
 #endif // TRANSMITTER_H

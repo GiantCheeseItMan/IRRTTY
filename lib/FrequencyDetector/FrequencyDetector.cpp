@@ -1,25 +1,88 @@
 #include "Arduino.h"
+#include "FrequencyDetector.h"
 
-int FD_detectFrequency()
+volatile unsigned long pulseTimeStartHIGH = micros();
+volatile unsigned long pulseTimeEndHIGH = micros();
+volatile unsigned long pulseTimeHIGH = 0;
+volatile bool durationHighFlag = false;
+
+volatile unsigned long pulseTimeStartLOW = micros();
+volatile unsigned long pulseTimeEndLOW = micros();
+volatile unsigned long pulseTimeLOW = 0;
+volatile bool durationLowFlag = false;
+
+FrequencyDetector::FrequencyDetector()
 {
-  int Htime = pulseIn(8, HIGH); // read high time
-  int Ltime = pulseIn(8, LOW);  // read low time
-  int Ttime = Htime + Ltime;
-  int freq = (1000000 / Ttime) - 30;
+  lastBit = -1;
+  lastFreq = MARK_FREQ;
+   attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
 }
 
-short FD_demodulate()
+int FrequencyDetector::getLastBit()
 {
-  int freq = detectFrequency();
-  if (freq > 2115 && freq < 2185) // 2125+-35
+  return lastBit;
+}
+
+/**
+ * Demodulates the incoming signal using the frequency detector
+ * @returns 1 if frequency is about mark frequency
+ * @returns 0 if frequency is about space frequency
+ * @returns -1 if frequency is neither
+ */
+void FrequencyDetector::demodulate()
+{
+  static int Htime;
+  static int Ltime;
+
+  if (durationHighFlag)
   {
-    digitalWrite(2, HIGH);
-    return 1;
+    Htime = pulseTimeHIGH;
   }
-  else if (freq > 2260 && freq < 2330) // 2295+-35
+
+  if(durationLowFlag)
   {
-    digitalWrite(2, LOW);
-    return 0;
+    Ltime = pulseTimeLOW;
   }
-  return -1;
+  int Ttime = Htime + Ltime;
+  int freq = (1000000 / Ttime); // Offset blocking time
+
+  if (abs(lastFreq - freq) < 2 * TOLERANCE)
+  {
+
+    if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
+    {
+      digitalWrite(DEBUG_PIN, HIGH);
+      lastBit = 1;
+    }
+    else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
+    {
+      digitalWrite(DEBUG_PIN, LOW);
+      lastBit = 0;
+    }
+  }
+  lastFreq = freq;
+}
+
+void nonBlockingPulseIn()
+{
+  if (digitalRead(RECEIVE_PIN) == HIGH) 
+  {
+    pulseTimeStartHIGH = micros();
+  }
+  else 
+  {
+    pulseTimeEndHIGH = micros();
+    pulseTimeHIGH = pulseTimeEndHIGH - pulseTimeStartHIGH;
+    durationHighFlag = true;
+  }
+  if (digitalRead(RECEIVE_PIN) == LOW) 
+  {
+    pulseTimeStartLOW = micros();
+  }
+  else 
+  {
+    pulseTimeEndLOW = micros();
+    pulseTimeLOW = pulseTimeEndLOW - pulseTimeStartLOW;
+    durationLowFlag = true;
+  }
 }
