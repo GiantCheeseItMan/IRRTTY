@@ -22,7 +22,7 @@ bool Decoder::addSample(int bit)
 char Decoder::decode()
 {
     unsigned char decodedChar = '\0';
-    for (int i = 1; i < 7; i++)
+    for (int i = 1; i < 9; i++)
     {
         decodedChar |= (data[i]<<(i));
     }

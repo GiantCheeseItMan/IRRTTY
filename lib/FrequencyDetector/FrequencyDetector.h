@@ -17,8 +17,10 @@ class FrequencyDetector{
     int getLastBit();
 
     private:
+    int bit;
     int lastBit;
     int lastFreq;
+    int last2Bit;
 };
 
 void nonBlockingPulseIn();

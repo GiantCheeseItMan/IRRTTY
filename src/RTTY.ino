@@ -70,5 +70,6 @@ ISR(TIMER1_COMPA_vect)
   if (decoder.addSample(detector.getLastBit()))
   {
     textHandler.addToPrintBuffer(decoder.decode());
+    locked = false;
   }
 }
