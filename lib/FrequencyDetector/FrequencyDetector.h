@@ -21,5 +21,7 @@ class FrequencyDetector{
     int lastFreq;
 };
 
+void nonBlockingPulseIn();
+
 
 #endif // FREQUENCY_DETECTOR_H

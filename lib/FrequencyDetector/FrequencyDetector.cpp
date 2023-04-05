@@ -1,14 +1,21 @@
 #include "Arduino.h"
 #include "FrequencyDetector.h"
 
-volatile unsigned long pulseTimeStart = micros();
-volatile unsigned long pulseTimeEnd = micros();
-volatile bool durationMeasured = false;
+volatile unsigned long pulseTimeStartHIGH = micros();
+volatile unsigned long pulseTimeEndHIGH = micros();
+volatile unsigned long pulseTimeHIGH = 0;
+volatile bool durationHighFlag = false;
+
+volatile unsigned long pulseTimeStartLOW = micros();
+volatile unsigned long pulseTimeEndLOW = micros();
+volatile unsigned long pulseTimeLOW = 0;
+volatile bool durationLowFlag = false;
 
 FrequencyDetector::FrequencyDetector()
 {
   lastBit = -1;
   lastFreq = MARK_FREQ;
+   attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
 }
 
 int FrequencyDetector::getLastBit()
@@ -24,10 +31,20 @@ int FrequencyDetector::getLastBit()
  */
 void FrequencyDetector::demodulate()
 {
-  int Htime = pulseIn(RECEIVE_PIN, HIGH); // read high time
-  int Ltime = pulseIn(RECEIVE_PIN, LOW);  // read low time
+  static int Htime;
+  static int Ltime;
+
+  if (durationHighFlag)
+  {
+    Htime = pulseTimeHIGH;
+  }
+
+  if(durationLowFlag)
+  {
+    Ltime = pulseTimeLOW;
+  }
   int Ttime = Htime + Ltime;
-  int freq = (1000000 / Ttime) - 110; // Offset blocking time
+  int freq = (1000000 / Ttime); // Offset blocking time
 
   if (abs(lastFreq - freq) < 2 * TOLERANCE)
   {
@@ -44,4 +61,28 @@ void FrequencyDetector::demodulate()
     }
   }
   lastFreq = freq;
+}
+
+void nonBlockingPulseIn()
+{
+  if (digitalRead(RECEIVE_PIN) == HIGH) 
+  {
+    pulseTimeStartHIGH = micros();
+  }
+  else 
+  {
+    pulseTimeEndHIGH = micros();
+    pulseTimeHIGH = pulseTimeEndHIGH - pulseTimeStartHIGH;
+    durationHighFlag = true;
+  }
+  if (digitalRead(RECEIVE_PIN) == LOW) 
+  {
+    pulseTimeStartLOW = micros();
+  }
+  else 
+  {
+    pulseTimeEndLOW = micros();
+    pulseTimeLOW = pulseTimeEndLOW - pulseTimeStartLOW;
+    durationLowFlag = true;
+  }
 }

@@ -69,7 +69,6 @@ ISR(TIMER1_COMPA_vect)
   transmitter.transmit();
   if (decoder.addSample(detector.getLastBit()))
   {
-    Serial.println(detector.getLastBit());
     textHandler.addToPrintBuffer(decoder.decode());
   }
 }
