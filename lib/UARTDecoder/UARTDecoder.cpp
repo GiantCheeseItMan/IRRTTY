@@ -5,6 +5,12 @@
 Decoder::Decoder()
 {
     decoderCursor = 0;
+    data[FRAME_SIZE] = { };
+}
+
+char Decoder::getLastChar()
+{
+    return lastChar;
 }
 
 bool Decoder::addSample(int bit)
@@ -16,16 +22,23 @@ bool Decoder::addSample(int bit)
         decoderCursor = 0;
         return true;
     }
+
     return false;
 }
 
 char Decoder::decode()
 {
     unsigned char decodedChar = '\0';
-    for (int i = 1; i < 9; i++)
+    for (int i = FRAME_SIZE - 1; i >= 1; i--)
     {
-        decodedChar |= (data[i]<<(i));
+        decodedChar = decodedChar + (data[i]<<(i - 1));
     }
     lastChar = decodedChar;
     return decodedChar;
+}
+
+void Decoder::resetCursor()
+{
+    data[FRAME_SIZE] = { };
+    decoderCursor = 0;
 }

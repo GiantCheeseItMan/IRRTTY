@@ -13,6 +13,8 @@ FrequencyDetector detector;
 volatile bool locked;
 volatile int transmitterStatus;
 volatile int lastBit;
+volatile int endOfMessageSum;
+volatile int detectorSum;
 
 void setup()
 {
@@ -51,18 +53,35 @@ void setup()
 
 void loop()
 {
+ detector.demodulate();
 
-  detector.demodulate();
-  if(!detector.getBit() && !locked)
+if (!locked)
+{
+  decoder.resetCursor();
+  if(!detector.getBit())
+  {
+    detectorSum++;
+  }
+  else
+  {
+    detectorSum = 0;
+  }
+  
+  if(detectorSum > 10)
   {
     TCNT1 = 0;
     locked = true;
   }
+}
+
 
   if (textHandler.updateSerialIn())
   {
     transmitter.addToTransmitQueue(textHandler.getSerialIn());
   }
+
+  textHandler.checkPrintBuffer();
+
   
 }
 
@@ -75,13 +94,29 @@ ISR(TIMER1_COMPA_vect)
   {
     textHandler.clearSerialIn();
   }
-  lastBit = detector.getBit();
+
+  if (locked)
+  {
+    lastBit = detector.getBit();
+    if(decoder.addSample(lastBit))
+    {
+      textHandler.addToPrintBuffer(decoder.decode());
+    }
+  }
+
   if(lastBit == 0)
   {
+    endOfMessageSum = 0;
     digitalWrite(DEBUG_PIN, LOW);
   }
   else
   {
+    endOfMessageSum++;
     digitalWrite(DEBUG_PIN, HIGH);
+  }
+
+  if(endOfMessageSum >= 9)
+  {
+    locked = false;
   }
 }

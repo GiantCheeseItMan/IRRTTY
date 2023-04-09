@@ -17,10 +17,12 @@ void addToPrintBuffer(String string);
 void addToPrintBuffer(char character);
 
 void clearSerialIn();
-
-private:
+void clearPrintBuffer();
 // Check the print buffer
 void checkPrintBuffer();
+
+private:
+
 // Print the print buffer on the serial monitor
 void printBufferOnMonitor();
 

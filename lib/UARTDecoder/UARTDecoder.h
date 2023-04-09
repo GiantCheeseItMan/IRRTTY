@@ -9,11 +9,13 @@ class Decoder{
 
 public:
 Decoder();
+char getLastChar();
 bool addSample(int sample);
 char decode();
+void resetCursor();
+bool data[FRAME_SIZE];
 
 private:
-bool data[FRAME_SIZE];
 int decoderCursor;
 char lastChar;
 

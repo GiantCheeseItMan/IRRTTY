@@ -28,7 +28,6 @@ void TextHandler::addToPrintBuffer(String string)
 {
     // Add the string to the print buffer
     printBuffer = printBuffer + string;
-    checkPrintBuffer();
 }
 
 /**
@@ -39,7 +38,6 @@ void TextHandler::addToPrintBuffer(char character)
 {
     // Add the character to the print buffer
     printBuffer = printBuffer + character;
-    checkPrintBuffer();
 }
 
 /**
@@ -69,6 +67,7 @@ void TextHandler::checkPrintBuffer()
     if (printBuffer.endsWith("\n"))
     {
         printBufferOnMonitor();
+        clearPrintBuffer();
     }
 }
 
@@ -79,8 +78,6 @@ void TextHandler::printBufferOnMonitor()
 {
     // Print the print buffer on monitor
     Serial.print(printBuffer);
-    // Clear print buffer
-    printBuffer = "\0";
 }
 
 /**
@@ -95,4 +92,9 @@ void TextHandler::printInputOnMonitor()
 void TextHandler::clearSerialIn()
 {
     serialIn = "\0";
+}
+
+void TextHandler::clearPrintBuffer()
+{
+    printBuffer = "\0";
 }
