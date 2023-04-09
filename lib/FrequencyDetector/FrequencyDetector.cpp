@@ -13,14 +13,13 @@ volatile bool durationLowFlag = false;
 
 FrequencyDetector::FrequencyDetector()
 {
-  lastBit = 1;
-  lastFreq = MARK_FREQ;
+  bit = 0;
    attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
 }
 
-int FrequencyDetector::getLastBit()
+int FrequencyDetector::getBit()
 {
-  return lastBit;
+  return bit;
 }
 
 /**
@@ -45,23 +44,16 @@ void FrequencyDetector::demodulate()
   }
   int Ttime = Htime + Ltime;
   int freq = (1000000 / Ttime); // Offset blocking time
+  freq = freq - 10;
 
     if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
     {
-      digitalWrite(DEBUG_PIN, HIGH);
       bit = 1;
     }
     else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
     {
-      digitalWrite(DEBUG_PIN, LOW);
       bit = 0;
     }
-
-    last2Bit = ceil((lastBit + bit) / 2); 
-    lastBit = bit;
-
-    Serial.println(bit);
-  lastFreq = freq;
 }
 
 void nonBlockingPulseIn()

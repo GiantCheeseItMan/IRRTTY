@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "Settings.h"
 
-#define TOLERANCE 35
+#define TOLERANCE 25
 #define UPPER_MARK MARK_FREQ + TOLERANCE
 #define LOWER_MARK MARK_FREQ - TOLERANCE
 #define UPPER_SPACE SPACE_FREQ + TOLERANCE
@@ -14,13 +14,10 @@ class FrequencyDetector{
     public:
     FrequencyDetector();
     void demodulate();
-    int getLastBit();
+    int getBit();
 
     private:
     int bit;
-    int lastBit;
-    int lastFreq;
-    int last2Bit;
 };
 
 void nonBlockingPulseIn();

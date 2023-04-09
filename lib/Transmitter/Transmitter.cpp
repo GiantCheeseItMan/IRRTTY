@@ -60,7 +60,7 @@ String Transmitter::Ascii2UART(String input)
 */
 int Transmitter::transmit()
 {
-  // Only transmit space if queue empty
+  // Transmit space if queue empty
   if (tqSize <= 0)
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
@@ -85,6 +85,7 @@ int Transmitter::transmit()
     tone(TRANSMIT_PIN, MARK_FREQ);
     removeFromTransmitQueue();
     UARTStreamCursor = 0;
+    return 2;
   }
   return 1;
     

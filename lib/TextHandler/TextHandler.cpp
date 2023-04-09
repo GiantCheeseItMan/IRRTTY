@@ -90,5 +90,9 @@ void TextHandler::printInputOnMonitor()
 {
     // Print the serialIn on monitor
     Serial.print(serialIn);
+}
+
+void TextHandler::clearSerialIn()
+{
     serialIn = "\0";
 }

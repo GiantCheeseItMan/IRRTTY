@@ -11,6 +11,8 @@ Transmitter transmitter;
 FrequencyDetector detector;
 
 volatile bool locked;
+volatile int transmitterStatus;
+volatile int lastBit;
 
 void setup()
 {
@@ -36,7 +38,7 @@ void setup()
   TCNT1 = 0;
   // Set compare match register to 45.45 baud sample rate
   // 16M for 16 MHz timer, 8 for prescaler of 8
-  OCR1A = (16000000 / (BAUD_RATE * 8 * 10));
+  OCR1A = (16000000 / (BAUD_RATE * 8));
   // Enable compare match mode
   TCCR1B |= (1 << WGM12);
   // Use 64 bit prescaler
@@ -51,25 +53,35 @@ void loop()
 {
 
   detector.demodulate();
-  if(!detector.getLastBit() && !locked)
+  if(!detector.getBit() && !locked)
   {
     TCNT1 = 0;
     locked = true;
   }
+
   if (textHandler.updateSerialIn())
   {
     transmitter.addToTransmitQueue(textHandler.getSerialIn());
   }
+  
 }
 
 // Timer 1 interrupt loop
 ISR(TIMER1_COMPA_vect)
 {
+  transmitterStatus = transmitter.transmit();
   // Transmit 1 bit of serial input stream
-  transmitter.transmit();
-  if (decoder.addSample(detector.getLastBit()))
+  if(transmitterStatus == 2)
   {
-    textHandler.addToPrintBuffer(decoder.decode());
-    locked = false;
+    textHandler.clearSerialIn();
+  }
+  lastBit = detector.getBit();
+  if(lastBit == 0)
+  {
+    digitalWrite(DEBUG_PIN, LOW);
+  }
+  else
+  {
+    digitalWrite(DEBUG_PIN, HIGH);
   }
 }

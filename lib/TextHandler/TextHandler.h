@@ -15,7 +15,9 @@ String getSerialIn();
 // Add a string/char to the print buffer
 void addToPrintBuffer(String string);
 void addToPrintBuffer(char character);
-String printBuffer;
+
+void clearSerialIn();
+
 private:
 // Check the print buffer
 void checkPrintBuffer();
@@ -28,7 +30,7 @@ void printInputOnMonitor();
 // The last serial monitor input
 String serialIn;
 // The string waiting to be printed
-
+String printBuffer;
 };
 
 #endif // TEXT_HANDLER_H
