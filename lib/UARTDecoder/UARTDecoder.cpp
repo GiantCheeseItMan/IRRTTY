@@ -5,7 +5,7 @@
 Decoder::Decoder()
 {
     decoderCursor = 0;
-    data[FRAME_SIZE] = { };
+    data[FRAME_SIZE] = {};
 }
 
 char Decoder::getLastChar()
@@ -31,7 +31,7 @@ char Decoder::decode()
     unsigned char decodedChar = '\0';
     for (int i = FRAME_SIZE - 1; i >= 1; i--)
     {
-        decodedChar = decodedChar + (data[i]<<(i - 1));
+        decodedChar = decodedChar + (data[i] << (i - 1));
     }
     lastChar = decodedChar;
     return decodedChar;
@@ -39,6 +39,6 @@ char Decoder::decode()
 
 void Decoder::resetCursor()
 {
-    data[FRAME_SIZE] = { };
+    data[FRAME_SIZE] = {};
     decoderCursor = 0;
 }

@@ -10,7 +10,7 @@ Transmitter::Transmitter()
 
 /**
  * Adds an item to the end of the transmit queue
-*/
+ */
 void Transmitter::addToTransmitQueue(String input)
 {
   if (tqSize < QUEUE_LENGTH - 1 && input != "\0")
@@ -22,22 +22,22 @@ void Transmitter::addToTransmitQueue(String input)
 
 /**
  * Removes the first item from the transmit queue and shifts everything down
-*/
+ */
 void Transmitter::removeFromTransmitQueue()
 {
   if (tqSize > 0)
   {
-      for (int i = 0; i < tqSize - 1; i++)
-   {
+    for (int i = 0; i < tqSize - 1; i++)
+    {
       transmitQueue[i] = transmitQueue[i + 1];
-   }
+    }
     tqSize--;
   }
 }
 
 /**
  * Converts an input string into UART bits
-*/
+ */
 String Transmitter::Ascii2UART(String input)
 {
   String output = "\0";
@@ -47,7 +47,7 @@ String Transmitter::Ascii2UART(String input)
 
     for (int ii = 0; ii < 8; ii++)
     {
-      byte bytes = bitRead(input[i], ii); //Turns the character into a byte
+      byte bytes = bitRead(input[i], ii); // Turns the character into a byte
       output += bytes;
     }
     output += STOP_BIT;
@@ -57,7 +57,7 @@ String Transmitter::Ascii2UART(String input)
 
 /**
  * Transmits 1 bit from the first item in the queue. Removes that item if it is done
-*/
+ */
 int Transmitter::transmit()
 {
   // Transmit space if queue empty
@@ -88,5 +88,4 @@ int Transmitter::transmit()
     return 2;
   }
   return 1;
-    
 }

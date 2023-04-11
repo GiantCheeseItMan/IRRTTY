@@ -53,27 +53,26 @@ void setup()
 
 void loop()
 {
- detector.demodulate();
+  detector.demodulate();
 
-if (!locked)
-{
-  decoder.resetCursor();
-  if(!detector.getBit())
+  if (!locked)
   {
-    detectorSum++;
-  }
-  else
-  {
-    detectorSum = 0;
-  }
-  
-  if(detectorSum > 10)
-  {
-    TCNT1 = 0;
-    locked = true;
-  }
-}
+    decoder.resetCursor();
+    if (!detector.getBit())
+    {
+      detectorSum++;
+    }
+    else
+    {
+      detectorSum = 0;
+    }
 
+    if (detectorSum > 10)
+    {
+      TCNT1 = 0;
+      locked = true;
+    }
+  }
 
   if (textHandler.updateSerialIn())
   {
@@ -81,8 +80,6 @@ if (!locked)
   }
 
   textHandler.checkPrintBuffer();
-
-  
 }
 
 // Timer 1 interrupt loop
@@ -90,7 +87,7 @@ ISR(TIMER1_COMPA_vect)
 {
   transmitterStatus = transmitter.transmit();
   // Transmit 1 bit of serial input stream
-  if(transmitterStatus == 2)
+  if (transmitterStatus == 2)
   {
     textHandler.clearSerialIn();
   }
@@ -98,13 +95,13 @@ ISR(TIMER1_COMPA_vect)
   if (locked)
   {
     lastBit = detector.getBit();
-    if(decoder.addSample(lastBit))
+    if (decoder.addSample(lastBit))
     {
       textHandler.addToPrintBuffer(decoder.decode());
     }
   }
 
-  if(lastBit == 0)
+  if (lastBit == 0)
   {
     endOfMessageSum = 0;
     digitalWrite(DEBUG_PIN, LOW);
@@ -115,7 +112,7 @@ ISR(TIMER1_COMPA_vect)
     digitalWrite(DEBUG_PIN, HIGH);
   }
 
-  if(endOfMessageSum >= 9)
+  if (endOfMessageSum >= 9)
   {
     locked = false;
   }

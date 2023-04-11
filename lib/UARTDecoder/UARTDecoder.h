@@ -5,20 +5,20 @@
 
 #include "Arduino.h"
 
-class Decoder{
+class Decoder
+{
 
 public:
-Decoder();
-char getLastChar();
-bool addSample(int sample);
-char decode();
-void resetCursor();
-bool data[FRAME_SIZE];
+    Decoder();
+    char getLastChar();
+    bool addSample(int sample);
+    char decode();
+    void resetCursor();
+    bool data[FRAME_SIZE];
 
 private:
-int decoderCursor;
-char lastChar;
-
+    int decoderCursor;
+    char lastChar;
 };
 
 #endif // UART_DECODER_H

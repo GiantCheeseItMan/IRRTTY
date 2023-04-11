@@ -10,17 +10,17 @@
 #define UPPER_SPACE SPACE_FREQ + TOLERANCE
 #define LOWER_SPACE SPACE_FREQ - TOLERANCE
 
-class FrequencyDetector{
-    public:
+class FrequencyDetector
+{
+public:
     FrequencyDetector();
     void demodulate();
     int getBit();
 
-    private:
+private:
     int bit;
 };
 
 void nonBlockingPulseIn();
-
 
 #endif // FREQUENCY_DETECTOR_H

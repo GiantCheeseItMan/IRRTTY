@@ -14,7 +14,7 @@ volatile bool durationLowFlag = false;
 FrequencyDetector::FrequencyDetector()
 {
   bit = 0;
-   attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
 }
 
 int FrequencyDetector::getBit()
@@ -38,7 +38,7 @@ void FrequencyDetector::demodulate()
     Htime = pulseTimeHIGH;
   }
 
-  if(durationLowFlag)
+  if (durationLowFlag)
   {
     Ltime = pulseTimeLOW;
   }
@@ -46,33 +46,33 @@ void FrequencyDetector::demodulate()
   int freq = (1000000 / Ttime); // Offset blocking time
   freq = freq - 10;
 
-    if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
-    {
-      bit = 1;
-    }
-    else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
-    {
-      bit = 0;
-    }
+  if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
+  {
+    bit = 1;
+  }
+  else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
+  {
+    bit = 0;
+  }
 }
 
 void nonBlockingPulseIn()
 {
-  if (digitalRead(RECEIVE_PIN) == HIGH) 
+  if (digitalRead(RECEIVE_PIN) == HIGH)
   {
     pulseTimeStartHIGH = micros();
   }
-  else 
+  else
   {
     pulseTimeEndHIGH = micros();
     pulseTimeHIGH = pulseTimeEndHIGH - pulseTimeStartHIGH;
     durationHighFlag = true;
   }
-  if (digitalRead(RECEIVE_PIN) == LOW) 
+  if (digitalRead(RECEIVE_PIN) == LOW)
   {
     pulseTimeStartLOW = micros();
   }
-  else 
+  else
   {
     pulseTimeEndLOW = micros();
     pulseTimeLOW = pulseTimeEndLOW - pulseTimeStartLOW;
