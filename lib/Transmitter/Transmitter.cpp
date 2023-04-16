@@ -44,7 +44,6 @@ String Transmitter::Ascii2UART(String input)
   for (unsigned int i = 0; i < input.length(); i++)
   {
     output += START_BIT;
-
     for (int ii = 0; ii < 8; ii++)
     {
       byte bytes = bitRead(input[i], ii); // Turns the character into a byte
@@ -55,6 +54,7 @@ String Transmitter::Ascii2UART(String input)
   return output;
 }
 
+
 /**
  * Transmits 1 bit from the first item in the queue. Removes that item if it is done
  */
@@ -64,6 +64,8 @@ int Transmitter::transmit()
   if (tqSize <= 0)
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
+    UARTStreamCursor = 0;
+    lastTransmittedBit = 1;
     return 0;
   }
 
@@ -72,10 +74,12 @@ int Transmitter::transmit()
   if (currentBit == '0')
   {
     tone(TRANSMIT_PIN, SPACE_FREQ);
+    lastTransmittedBit = 0;
   }
   else
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
+    lastTransmittedBit = 1;
   }
 
   UARTStreamCursor++;
@@ -83,6 +87,7 @@ int Transmitter::transmit()
   if (UARTStreamCursor >= transmitQueue[0].length())
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
+    lastTransmittedBit = 1;
     removeFromTransmitQueue();
     UARTStreamCursor = 0;
     return 2;

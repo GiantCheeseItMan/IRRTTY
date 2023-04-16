@@ -14,4 +14,6 @@
 #define START_BIT '0'
 #define STOP_BIT '1'
 
+#define END_CHAR '\n'
+
 #endif // SETTINGS_H

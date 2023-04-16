@@ -13,8 +13,11 @@ FrequencyDetector detector;
 volatile bool locked;
 volatile int transmitterStatus;
 volatile int lastBit;
+volatile int last2Bit;
 volatile int endOfMessageSum;
 volatile int detectorSum;
+
+volatile bool tempBool;
 
 void setup()
 {
@@ -24,7 +27,7 @@ void setup()
   pinMode(TRANSMIT_PIN, OUTPUT);
   tone(TRANSMIT_PIN, MARK_FREQ);
 
-  Serial.begin(38400);
+  Serial.begin(19200);
 
   // reciever
   pinMode(RECEIVE_PIN, INPUT);
@@ -55,28 +58,49 @@ void loop()
 {
   detector.demodulate();
 
+
   if (!locked)
   {
-    decoder.resetCursor();
-    if (!detector.getBit())
+
+    if (!lastBit)
     {
-      detectorSum++;
+      detectorSum++;      
     }
     else
     {
       detectorSum = 0;
     }
 
-    if (detectorSum > 10)
+    if (detectorSum > 0)
     {
+      decoder.resetCursor();
+      if(last2Bit)
+      {
+        decoder.addSample(last2Bit);
+        decoder.addSample(lastBit);
+      }
       TCNT1 = 0;
+      digitalWrite(DEBUG_PIN, LOW);
       locked = true;
     }
+    
   }
 
   if (textHandler.updateSerialIn())
   {
     transmitter.addToTransmitQueue(textHandler.getSerialIn());
+  }
+
+  if (transmitterStatus == 2)
+  {
+    textHandler.clearSerialIn();
+  }
+
+  if (tempBool)
+  {
+    textHandler.addToPrintBuffer(decoder.decode());
+    decoder.resetCursor();
+    tempBool = false;
   }
 
   textHandler.checkPrintBuffer();
@@ -87,33 +111,32 @@ ISR(TIMER1_COMPA_vect)
 {
   transmitterStatus = transmitter.transmit();
   // Transmit 1 bit of serial input stream
-  if (transmitterStatus == 2)
-  {
-    textHandler.clearSerialIn();
-  }
+  last2Bit = lastBit;
+  lastBit = detector.getBit();
 
   if (locked)
   {
-    lastBit = detector.getBit();
     if (decoder.addSample(lastBit))
     {
-      textHandler.addToPrintBuffer(decoder.decode());
+      tempBool = true;
+    }
+
+    if (lastBit == 0)
+    {
+      endOfMessageSum = 0;
+      digitalWrite(DEBUG_PIN, LOW);
+    }
+    else
+    {
+      endOfMessageSum++;
+      digitalWrite(DEBUG_PIN, HIGH);
+    }
+
+    if (endOfMessageSum > 20)
+    {
+      locked = false;
     }
   }
 
-  if (lastBit == 0)
-  {
-    endOfMessageSum = 0;
-    digitalWrite(DEBUG_PIN, LOW);
-  }
-  else
-  {
-    endOfMessageSum++;
-    digitalWrite(DEBUG_PIN, HIGH);
-  }
-
-  if (endOfMessageSum >= 9)
-  {
-    locked = false;
-  }
+  TCNT1 = 0;
 }

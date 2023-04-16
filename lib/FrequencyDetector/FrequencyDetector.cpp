@@ -44,13 +44,12 @@ void FrequencyDetector::demodulate()
   }
   int Ttime = Htime + Ltime;
   int freq = (1000000 / Ttime); // Offset blocking time
-  freq = freq - 10;
-
-  if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-35
+  freq = freq + OFFSET;
+  if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-tolerance
   {
     bit = 1;
   }
-  else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-35
+  else if (freq > LOWER_SPACE && freq < UPPER_SPACE) // 2295+-tolerance
   {
     bit = 0;
   }

@@ -1,5 +1,6 @@
 #include "TextHandler.h"
 
+
 /**
  * Default Constructor for a TextHandler
  */
@@ -26,8 +27,12 @@ String TextHandler::getSerialIn()
  */
 void TextHandler::addToPrintBuffer(String string)
 {
-    // Add the string to the print buffer
-    printBuffer = printBuffer + string;
+    // Add the string to the print buffer if it isn't null
+    if (string != "\0")
+    {
+        printBuffer += string;
+    }
+    
 }
 
 /**
@@ -36,8 +41,11 @@ void TextHandler::addToPrintBuffer(String string)
  */
 void TextHandler::addToPrintBuffer(char character)
 {
-    // Add the character to the print buffer
-    printBuffer = printBuffer + character;
+    // Add the character to the print buffer if it isn't null
+    if (character != '\0')
+    {
+    printBuffer += character;
+    }
 }
 
 /**
@@ -64,7 +72,7 @@ void TextHandler::checkPrintBuffer()
 {
     // If the last character in the printBuffer is a newline,
     // print to the serial monitor.
-    if (printBuffer.endsWith("\n"))
+    if (printBuffer.length() > 0)
     {
         printBufferOnMonitor();
         clearPrintBuffer();
@@ -77,7 +85,7 @@ void TextHandler::checkPrintBuffer()
 void TextHandler::printBufferOnMonitor()
 {
     // Print the print buffer on monitor
-    Serial.print(printBuffer);
+    Serial.println((uint8_t)printBuffer[0]);
 }
 
 /**

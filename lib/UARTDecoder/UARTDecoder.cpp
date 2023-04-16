@@ -5,7 +5,7 @@
 Decoder::Decoder()
 {
     decoderCursor = 0;
-    data[FRAME_SIZE] = {};
+    memset(data, 0, FRAME_SIZE);
 }
 
 char Decoder::getLastChar()
@@ -13,7 +13,7 @@ char Decoder::getLastChar()
     return lastChar;
 }
 
-bool Decoder::addSample(int bit)
+bool Decoder::addSample(bool bit)
 {
     data[decoderCursor] = bit;
     decoderCursor++;
@@ -29,16 +29,21 @@ bool Decoder::addSample(int bit)
 char Decoder::decode()
 {
     unsigned char decodedChar = '\0';
-    for (int i = FRAME_SIZE - 1; i >= 1; i--)
+    for (int i = 1; i < FRAME_SIZE - 1; i++)
     {
         decodedChar = decodedChar + (data[i] << (i - 1));
     }
+    if(decodedChar == 255)
+    {
+        return '\0';
+    }
     lastChar = decodedChar;
+    memset(data, 0, FRAME_SIZE);
     return decodedChar;
 }
 
 void Decoder::resetCursor()
 {
-    data[FRAME_SIZE] = {};
     decoderCursor = 0;
+    memset(data, 0, FRAME_SIZE);
 }

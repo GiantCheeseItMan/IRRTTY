@@ -2,6 +2,7 @@
 #define TEXT_HANDLER_H
 
 #include "Arduino.h"
+#include "Settings.h"
 
 class TextHandler
 {

@@ -11,7 +11,7 @@ class Decoder
 public:
     Decoder();
     char getLastChar();
-    bool addSample(int sample);
+    bool addSample(bool sample);
     char decode();
     void resetCursor();
     bool data[FRAME_SIZE];
