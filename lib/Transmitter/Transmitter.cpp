@@ -54,7 +54,6 @@ String Transmitter::Ascii2UART(String input)
   return output;
 }
 
-
 /**
  * Transmits 1 bit from the first item in the queue. Removes that item if it is done
  */
@@ -65,7 +64,6 @@ int Transmitter::transmit()
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
     UARTStreamCursor = 0;
-    lastTransmittedBit = 1;
     return 0;
   }
 
@@ -74,12 +72,10 @@ int Transmitter::transmit()
   if (currentBit == '0')
   {
     tone(TRANSMIT_PIN, SPACE_FREQ);
-    lastTransmittedBit = 0;
   }
   else
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
-    lastTransmittedBit = 1;
   }
 
   UARTStreamCursor++;
@@ -87,9 +83,14 @@ int Transmitter::transmit()
   if (UARTStreamCursor >= transmitQueue[0].length())
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
-    lastTransmittedBit = 1;
     UARTStreamCursor = 0;
     return 2;
   }
   return 1;
+}
+
+void Transmitter::clearTransmitQueue()
+{
+  transmitQueue[QUEUE_LENGTH] = {"\0"};
+  numTQItems = 0;
 }

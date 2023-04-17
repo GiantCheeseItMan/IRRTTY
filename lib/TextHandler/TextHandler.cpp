@@ -1,6 +1,5 @@
 #include "TextHandler.h"
 
-
 /**
  * Default Constructor for a TextHandler
  */
@@ -32,7 +31,6 @@ void TextHandler::addToPrintBuffer(String string)
     {
         printBuffer += string;
     }
-    
 }
 
 /**
@@ -44,7 +42,7 @@ void TextHandler::addToPrintBuffer(char character)
     // Add the character to the print buffer if it isn't null
     if (character != '\0')
     {
-    printBuffer += character;
+        printBuffer += character;
     }
 }
 
@@ -53,15 +51,15 @@ void TextHandler::addToPrintBuffer(char character)
  */
 bool TextHandler::updateSerialIn()
 {
+    bool status = Serial.available();
     // Check for bits in serial buffer
-    if (Serial.available())
+    if (status)
     {
         // Read the string into the input buffer
         serialIn = Serial.readString();
         printInputOnMonitor();
-        return true;
     }
-    return false;
+    return status;
 }
 
 /**

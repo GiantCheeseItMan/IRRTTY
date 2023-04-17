@@ -13,8 +13,7 @@ public:
     void addToTransmitQueue(String input);
     int transmit();
     void removeFromTransmitQueue();
-    bool lastTransmittedBit;
-    
+    void clearTransmitQueue();
 
 private:
     String Ascii2UART(String input);

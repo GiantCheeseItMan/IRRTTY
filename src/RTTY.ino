@@ -97,8 +97,6 @@ void loop()
     dataArrayFull = false;
   }
 
-  
-
   if (transmitterStatus == 2)
   {
     if (textHandler.getSerialIn() != "\0")
