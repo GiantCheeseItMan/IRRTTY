@@ -72,7 +72,7 @@ void TextHandler::checkPrintBuffer()
 {
     // If the last character in the printBuffer is a newline,
     // print to the serial monitor.
-    if (printBuffer.length() > 0)
+    if (printBuffer.endsWith("\n"))
     {
         printBufferOnMonitor();
         clearPrintBuffer();
@@ -85,7 +85,8 @@ void TextHandler::checkPrintBuffer()
 void TextHandler::printBufferOnMonitor()
 {
     // Print the print buffer on monitor
-    Serial.println((uint8_t)printBuffer[0]);
+    Serial.print("| ");
+    Serial.print(printBuffer);
 }
 
 /**
@@ -94,6 +95,7 @@ void TextHandler::printBufferOnMonitor()
 void TextHandler::printInputOnMonitor()
 {
     // Print the serialIn on monitor
+    Serial.print("> ");
     Serial.print(serialIn);
 }
 

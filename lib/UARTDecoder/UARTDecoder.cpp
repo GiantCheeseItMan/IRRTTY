@@ -45,5 +45,9 @@ char Decoder::decode()
 void Decoder::resetCursor()
 {
     decoderCursor = 0;
+}
+
+void Decoder::clearDataArray()
+{
     memset(data, 0, FRAME_SIZE);
 }

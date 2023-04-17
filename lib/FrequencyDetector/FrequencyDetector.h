@@ -16,10 +16,10 @@ class FrequencyDetector
 public:
     FrequencyDetector();
     void demodulate();
-    int getBit();
+    bool getBit();
 
 private:
-    int bit;
+    bool bit;
 };
 
 void nonBlockingPulseIn();

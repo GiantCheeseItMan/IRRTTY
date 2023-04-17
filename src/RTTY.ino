@@ -12,12 +12,12 @@ FrequencyDetector detector;
 
 volatile bool locked;
 volatile int transmitterStatus;
-volatile int lastBit;
-volatile int last2Bit;
+volatile bool lastBit;
 volatile int endOfMessageSum;
 volatile int detectorSum;
 
-volatile bool tempBool;
+volatile bool dataArrayFull;
+volatile bool transmissionDone;
 
 void setup()
 {
@@ -31,6 +31,8 @@ void setup()
 
   // reciever
   pinMode(RECEIVE_PIN, INPUT);
+
+  pinMode(7, OUTPUT);
 
   locked = false;
   // Configure timer 1
@@ -58,69 +60,67 @@ void loop()
 {
   detector.demodulate();
 
-
   if (!locked)
   {
-
+    decoder.resetCursor();
     if (!lastBit)
     {
-      detectorSum++;      
-    }
-    else
-    {
-      detectorSum = 0;
-    }
-
-    if (detectorSum > 0)
-    {
-      decoder.resetCursor();
-      if(last2Bit)
-      {
-        decoder.addSample(last2Bit);
-        decoder.addSample(lastBit);
-      }
+      decoder.clearDataArray();
+      decoder.addSample(0);
       TCNT1 = 0;
       digitalWrite(DEBUG_PIN, LOW);
+      digitalWrite(7, HIGH);
       locked = true;
     }
-    
-  }
 
+  }
+  // Check serial buffer for input and store in buffer, add to transmit queue
   if (textHandler.updateSerialIn())
   {
     transmitter.addToTransmitQueue(textHandler.getSerialIn());
   }
 
-  if (transmitterStatus == 2)
-  {
-    textHandler.clearSerialIn();
-  }
-
-  if (tempBool)
+  // Check for dataArrayFull, decode character and add to print buffer. Reset flag
+  if (dataArrayFull)
   {
     textHandler.addToPrintBuffer(decoder.decode());
     decoder.resetCursor();
-    tempBool = false;
+    dataArrayFull = false;
   }
 
   textHandler.checkPrintBuffer();
+
+  if (transmissionDone)
+  {
+    transmitter.removeFromTransmitQueue();
+    transmissionDone = false;
+  }
 }
 
 // Timer 1 interrupt loop
 ISR(TIMER1_COMPA_vect)
 {
-  transmitterStatus = transmitter.transmit();
   // Transmit 1 bit of serial input stream
-  last2Bit = lastBit;
+  transmitterStatus = transmitter.transmit();
+
+// Throw flag if transmitter is done transmitting item
+  if (transmitterStatus == 2)
+  {
+    transmissionDone = true;
+  }
+
+  // Get the current bit that the detector sees
   lastBit = detector.getBit();
 
+  // If locked, add samples and throw flag when done
   if (locked)
   {
     if (decoder.addSample(lastBit))
     {
-      tempBool = true;
+      dataArrayFull = true;
     }
 
+    // Check for end of message and write values to the debug pin
     if (lastBit == 0)
     {
       endOfMessageSum = 0;
@@ -132,9 +132,12 @@ ISR(TIMER1_COMPA_vect)
       digitalWrite(DEBUG_PIN, HIGH);
     }
 
-    if (endOfMessageSum > 20)
+    // Release lock if recieved 10 1s in a row
+    if (endOfMessageSum > 10)
     {
+      digitalWrite(7, LOW);
       locked = false;
+      endOfMessageSum = 0;
     }
   }
 

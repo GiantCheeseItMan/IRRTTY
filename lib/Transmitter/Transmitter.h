@@ -4,22 +4,22 @@
 #include "Arduino.h"
 #include "Settings.h"
 
-#define QUEUE_LENGTH 5
+#define QUEUE_LENGTH 20
 
 class Transmitter
 {
 public:
-    void addToTransmitQueue(String input);
     Transmitter();
+    void addToTransmitQueue(String input);
     int transmit();
+    void removeFromTransmitQueue();
     bool lastTransmittedBit;
     
 
 private:
     String Ascii2UART(String input);
-    void removeFromTransmitQueue();
     unsigned int UARTStreamCursor;
-    int tqSize;
+    int numTQItems;
     String transmitQueue[QUEUE_LENGTH];
 };
 

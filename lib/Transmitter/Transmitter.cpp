@@ -4,7 +4,7 @@
 Transmitter::Transmitter()
 {
   transmitQueue[QUEUE_LENGTH] = {"\0"};
-  tqSize = 0;
+  numTQItems = 0;
   UARTStreamCursor = 0;
 }
 
@@ -13,10 +13,10 @@ Transmitter::Transmitter()
  */
 void Transmitter::addToTransmitQueue(String input)
 {
-  if (tqSize < QUEUE_LENGTH - 1 && input != "\0")
+  if (numTQItems < QUEUE_LENGTH - 1 && input != "\0")
   {
-    transmitQueue[tqSize] = Ascii2UART(input);
-    tqSize++;
+    transmitQueue[numTQItems] = Ascii2UART(input);
+    numTQItems++;
   }
 }
 
@@ -25,13 +25,13 @@ void Transmitter::addToTransmitQueue(String input)
  */
 void Transmitter::removeFromTransmitQueue()
 {
-  if (tqSize > 0)
+  if (numTQItems > 0)
   {
-    for (int i = 0; i < tqSize - 1; i++)
+    for (int i = 0; i < numTQItems - 2; i++)
     {
       transmitQueue[i] = transmitQueue[i + 1];
     }
-    tqSize--;
+    numTQItems--;
   }
 }
 
@@ -61,7 +61,7 @@ String Transmitter::Ascii2UART(String input)
 int Transmitter::transmit()
 {
   // Transmit space if queue empty
-  if (tqSize <= 0)
+  if (numTQItems <= 0)
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
     UARTStreamCursor = 0;
@@ -88,7 +88,6 @@ int Transmitter::transmit()
   {
     tone(TRANSMIT_PIN, MARK_FREQ);
     lastTransmittedBit = 1;
-    removeFromTransmitQueue();
     UARTStreamCursor = 0;
     return 2;
   }

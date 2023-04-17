@@ -14,6 +14,7 @@ public:
     bool addSample(bool sample);
     char decode();
     void resetCursor();
+    void clearDataArray();
     bool data[FRAME_SIZE];
 
 private:

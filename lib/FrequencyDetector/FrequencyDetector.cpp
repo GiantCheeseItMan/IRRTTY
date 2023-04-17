@@ -17,7 +17,7 @@ FrequencyDetector::FrequencyDetector()
   attachInterrupt(digitalPinToInterrupt(RECEIVE_PIN), nonBlockingPulseIn, CHANGE);
 }
 
-int FrequencyDetector::getBit()
+bool FrequencyDetector::getBit()
 {
   return bit;
 }
