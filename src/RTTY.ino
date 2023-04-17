@@ -32,8 +32,6 @@ void setup()
   // reciever
   pinMode(RECEIVE_PIN, INPUT);
 
-  pinMode(7, OUTPUT);
-
   locked = false;
   // Configure timer 1
   // Turn off interrupts
@@ -60,20 +58,31 @@ void loop()
 {
   detector.demodulate();
 
+  detectorSum += detector.getBit();
+
   if (!locked)
   {
     decoder.resetCursor();
     if (!lastBit)
     {
+      Serial.end();
       decoder.clearDataArray();
       decoder.addSample(0);
       TCNT1 = 0;
       digitalWrite(DEBUG_PIN, LOW);
-      digitalWrite(7, HIGH);
       locked = true;
     }
-
   }
+
+  // Release lock if recieved 10 1s in a row
+  if (endOfMessageSum > 10)
+  {
+    Serial.begin(19200);
+    locked = false;
+    endOfMessageSum = 0;
+    textHandler.checkPrintBuffer();
+  }
+
   // Check serial buffer for input and store in buffer, add to transmit queue
   if (textHandler.updateSerialIn())
   {
@@ -88,12 +97,16 @@ void loop()
     dataArrayFull = false;
   }
 
-  textHandler.checkPrintBuffer();
+  
 
-  if (transmissionDone)
+  if (transmitterStatus == 2)
   {
+    if (textHandler.getSerialIn() != "\0")
+    {
+      textHandler.checkPrintBuffer();
+    }
     transmitter.removeFromTransmitQueue();
-    transmissionDone = false;
+    transmitterStatus = 0;
   }
 }
 
@@ -102,12 +115,6 @@ ISR(TIMER1_COMPA_vect)
 {
   // Transmit 1 bit of serial input stream
   transmitterStatus = transmitter.transmit();
-
-// Throw flag if transmitter is done transmitting item
-  if (transmitterStatus == 2)
-  {
-    transmissionDone = true;
-  }
 
   // Get the current bit that the detector sees
   lastBit = detector.getBit();
@@ -130,14 +137,6 @@ ISR(TIMER1_COMPA_vect)
     {
       endOfMessageSum++;
       digitalWrite(DEBUG_PIN, HIGH);
-    }
-
-    // Release lock if recieved 10 1s in a row
-    if (endOfMessageSum > 10)
-    {
-      digitalWrite(7, LOW);
-      locked = false;
-      endOfMessageSum = 0;
     }
   }
 

@@ -22,12 +22,14 @@ public:
     // Check the print buffer
     void checkPrintBuffer();
 
+        // Prints the serialIn on the monitor
+    void printInputOnMonitor();
+
 private:
     // Print the print buffer on the serial monitor
     void printBufferOnMonitor();
 
-    // Prints the serialIn on the monitor
-    void printInputOnMonitor();
+
 
     // The last serial monitor input
     String serialIn;
