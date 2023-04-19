@@ -3,7 +3,7 @@
 
 Transmitter::Transmitter()
 {
-  transmitQueue[QUEUE_LENGTH] = {"\0"};
+  memset(transmitQueue, 0, sizeof(transmitQueue));
   numTQItems = 0;
   UARTStreamCursor = 0;
 }
@@ -33,6 +33,7 @@ void Transmitter::removeFromTransmitQueue()
     }
     numTQItems--;
   }
+  transmitQueue[numTQItems] = "\0";
 }
 
 /**
@@ -91,6 +92,7 @@ int Transmitter::transmit()
 
 void Transmitter::clearTransmitQueue()
 {
-  transmitQueue[QUEUE_LENGTH] = {"\0"};
+  memset(transmitQueue, 0, sizeof(transmitQueue));
   numTQItems = 0;
+  tone(TRANSMIT_PIN, MARK_FREQ);
 }

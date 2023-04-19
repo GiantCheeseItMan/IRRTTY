@@ -44,8 +44,6 @@ void FrequencyDetector::demodulate()
   }
   int Ttime = Htime + Ltime;
   int freq = (1000000 / Ttime); // Offset blocking time
-  freq = freq + OFFSET;
-  Serial.println(freq);
   if (freq > LOWER_MARK && freq < UPPER_MARK) // 2125+-tolerance
   {
     bit = 1;

@@ -81,6 +81,7 @@ void loop()
     locked = false;
     endOfMessageSum = 0;
     textHandler.checkPrintBuffer();
+    textHandler.clearPrintBuffer();
   }
 
   // Check serial buffer for input and store in buffer, add to transmit queue

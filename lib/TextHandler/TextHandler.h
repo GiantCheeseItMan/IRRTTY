@@ -24,10 +24,10 @@ public:
 
     // Prints the serialIn on the monitor
     void printInputOnMonitor();
-
-private:
     // Print the print buffer on the serial monitor
     void printBufferOnMonitor();
+
+private:
 
     // The last serial monitor input
     String serialIn;
