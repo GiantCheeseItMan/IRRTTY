@@ -66,7 +66,7 @@ bool TextHandler::updateSerialIn()
  * Checks the print buffer for a newline character.
  * Prints it to the serial monitor if one is found.
  */
-void TextHandler::checkPrintBuffer()
+bool TextHandler::checkPrintBuffer()
 {
     // If the last character in the printBuffer is a newline,
     // print to the serial monitor.
@@ -74,7 +74,9 @@ void TextHandler::checkPrintBuffer()
     {
         printBufferOnMonitor();
         clearPrintBuffer();
+        return true;
     }
+    return false;
 }
 
 /**

@@ -20,7 +20,7 @@ public:
     void clearSerialIn();
     void clearPrintBuffer();
     // Check the print buffer
-    void checkPrintBuffer();
+    bool checkPrintBuffer();
 
     // Prints the serialIn on the monitor
     void printInputOnMonitor();
